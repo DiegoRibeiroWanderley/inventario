@@ -11,4 +11,6 @@ public interface ItemService {
     ItemDTO addItem(ItemDTO itemDTO);
 
     ItemDTO updateItem(Integer id, ItemDTO itemDTO);
+
+    ItemDTO deleteItem(Integer id);
 }

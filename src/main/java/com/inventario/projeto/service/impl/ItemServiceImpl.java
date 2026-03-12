@@ -7,7 +7,6 @@ import com.inventario.projeto.model.Item;
 import com.inventario.projeto.repositories.ItemRepository;
 import com.inventario.projeto.service.ItemService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -41,5 +40,14 @@ public class ItemServiceImpl implements ItemService {
         itemToBeUpdated.setId(itemFromDB.getId());
         Item itemUpdated = itemRepository.save(itemToBeUpdated);
         return itemMapper.toItemDTO(itemUpdated);
+    }
+
+    @Override
+    public ItemDTO deleteItem(Integer id) {
+        Item itemFromDB = itemRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Item", id));
+
+        itemRepository.deleteById(id);
+        return itemMapper.toItemDTO(itemFromDB);
     }
 }
