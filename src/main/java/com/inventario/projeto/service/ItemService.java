@@ -8,7 +8,7 @@ public interface ItemService {
 
     List<ItemDTO> findAll();
 
-    ItemDTO addItem(ItemDTO itemDTO);
+    ItemDTO addItem(ItemDTO itemDTO, Integer categoriaId);
 
     ItemDTO updateItem(Integer id, ItemDTO itemDTO);
 

@@ -3,12 +3,15 @@ package com.inventario.projeto.service.impl;
 import com.inventario.projeto.DTOs.ItemDTO;
 import com.inventario.projeto.exception.NotFoundException;
 import com.inventario.projeto.mapper.ItemMapper;
+import com.inventario.projeto.model.Categoria;
 import com.inventario.projeto.model.Item;
+import com.inventario.projeto.repositories.CategoriaRepository;
 import com.inventario.projeto.repositories.ItemRepository;
 import com.inventario.projeto.service.ItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -16,6 +19,7 @@ import java.util.List;
 public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
+    private final CategoriaRepository categoriaRepository;
     private final ItemMapper itemMapper;
 
     @Override
@@ -25,8 +29,12 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDTO addItem(ItemDTO itemDTO) {
+    public ItemDTO addItem(ItemDTO itemDTO, Integer categoriaId) {
+        Categoria categoria = categoriaRepository.findById(categoriaId)
+                .orElseThrow(() -> new NotFoundException("Categoria", categoriaId));
         Item item = itemMapper.toItem(itemDTO);
+        item.setCategoria(categoria);
+
         item = itemRepository.save(item);
         return itemMapper.toItemDTO(item);
     }
@@ -37,7 +45,24 @@ public class ItemServiceImpl implements ItemService {
                 .orElseThrow(() -> new NotFoundException("Item", id));
         Item itemToBeUpdated = itemMapper.toItem(itemDTO);
 
+        if (itemToBeUpdated.getSKU() == null) itemToBeUpdated.setSKU(itemFromDB.getSKU());
+        if (itemToBeUpdated.getCodigoDeBarras() == null) itemToBeUpdated.setCodigoDeBarras(itemFromDB.getCodigoDeBarras());
+        if (itemToBeUpdated.getNome() == null) itemToBeUpdated.setNome(itemFromDB.getNome());
+        if (itemToBeUpdated.getDescricao() == null) itemToBeUpdated.setDescricao(itemFromDB.getDescricao());
+        if (itemToBeUpdated.getMarca() == null) itemToBeUpdated.setMarca(itemFromDB.getMarca());
+        if (itemToBeUpdated.getQuantidadeMinima() == null) itemToBeUpdated.setQuantidadeMinima(itemFromDB.getQuantidadeMinima());
+        if (itemToBeUpdated.getPeso() == null) itemToBeUpdated.setPeso(itemFromDB.getPeso());
+        if (itemToBeUpdated.getPrecoCompra() == null) itemToBeUpdated.setPrecoCompra(itemFromDB.getPrecoCompra());
+        if (itemToBeUpdated.getPrecoVenda() == null) itemToBeUpdated.setPrecoVenda(itemFromDB.getPrecoVenda());
+        if (itemToBeUpdated.getTaxa() == null) itemToBeUpdated.setTaxa(itemFromDB.getTaxa());
+
+        itemToBeUpdated.setCategoria(itemFromDB.getCategoria());
+        itemToBeUpdated.setUltimoUpdate(LocalDate.now());
+        itemToBeUpdated.setQuantidadeEmEstoque(itemFromDB.getQuantidadeEmEstoque());
+        itemToBeUpdated.setCriadoEm(itemFromDB.getCriadoEm());
+        itemToBeUpdated.setAtivo(itemFromDB.getAtivo());
         itemToBeUpdated.setId(itemFromDB.getId());
+
         Item itemUpdated = itemRepository.save(itemToBeUpdated);
         return itemMapper.toItemDTO(itemUpdated);
     }

@@ -16,25 +16,25 @@ public class ItemController {
 
     private final ItemService itemService;
 
-    @GetMapping("/items")
+    @GetMapping("/itens")
     public ResponseEntity<List<ItemDTO>> getItems() {
         List<ItemDTO> items = itemService.findAll();
         return new ResponseEntity<>(items, HttpStatus.OK);
     }
 
-    @PostMapping("/items/add")
-    public ResponseEntity<ItemDTO> addItem(@RequestBody ItemDTO itemDTO) {
-        ItemDTO addedItem = itemService.addItem(itemDTO);
+    @PostMapping("/itens/add/categoria/{categoriaId}")
+    public ResponseEntity<ItemDTO> addItem(@RequestBody ItemDTO itemDTO, @PathVariable Integer categoriaId) {
+        ItemDTO addedItem = itemService.addItem(itemDTO, categoriaId);
         return new ResponseEntity<>(addedItem, HttpStatus.CREATED);
     }
 
-    @PutMapping("/items/{id}/update")
+    @PutMapping("/item/{id}/update")
     public ResponseEntity<ItemDTO> updateItem(@PathVariable Integer id, @RequestBody ItemDTO itemDTO) {
         ItemDTO updatedItem = itemService.updateItem(id, itemDTO);
         return new ResponseEntity<>(updatedItem, HttpStatus.OK);
     }
 
-    @DeleteMapping("/items/{id}/delete")
+    @DeleteMapping("/item/{id}/delete")
     public ResponseEntity<ItemDTO> deleteItem(@PathVariable Integer id) {
         ItemDTO deletedItem = itemService.deleteItem(id);
         return new ResponseEntity<>(deletedItem, HttpStatus.OK);
