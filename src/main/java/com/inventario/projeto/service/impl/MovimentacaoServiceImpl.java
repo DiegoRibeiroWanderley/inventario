@@ -31,6 +31,12 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
         return movimentacaoMapper.toMovimentacaoDTOs(movimentacoes);
     }
 
+    @Override
+    public List<MovimentacaoDTO> buscarMovimentacoesPorItem(Integer id) {
+        List<Movimentacao> movimentacoesPorItem = movimentacaoRepository.findByItemId(id);
+        return movimentacaoMapper.toMovimentacaoDTOs(movimentacoesPorItem);
+    }
+
     @Transactional
     @Override
     public MovimentacaoDTO movimentacao(String tipo, Integer itemId, Integer quantidade) {

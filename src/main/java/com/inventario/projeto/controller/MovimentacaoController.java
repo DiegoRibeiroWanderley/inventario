@@ -22,6 +22,12 @@ public class MovimentacaoController {
         return new ResponseEntity<>(movimentacoes, HttpStatus.OK);
     }
 
+    @GetMapping("/movimentacoes/item/{id}")
+    public ResponseEntity<List<MovimentacaoDTO>> buscarMovimentacaoPorItem(@PathVariable Integer id) {
+        List<MovimentacaoDTO> movimentacoesDoItem = movimentacaoService.buscarMovimentacoesPorItem(id);
+        return new ResponseEntity<>(movimentacoesDoItem, HttpStatus.OK);
+    }
+
     @PostMapping("/movimentacao/{tipo}/{quantidade}/item/{itemId}")
     public ResponseEntity<MovimentacaoDTO> entrada(@PathVariable String tipo, @PathVariable Integer itemId, @PathVariable Integer quantidade) {
         MovimentacaoDTO movimentacao = movimentacaoService.movimentacao(
