@@ -16,26 +16,26 @@ public class CategoriaController {
 
     private final CategoriaService categoriaService;
 
-    @GetMapping("/items")
+    @GetMapping("/categorias")
     public ResponseEntity<List<CategoriaDTO>> getCategorias() {
         List<CategoriaDTO> categorias = categoriaService.findAll();
         return new ResponseEntity<>(categorias, HttpStatus.OK);
     }
 
-    @PostMapping("/items/add")
+    @PostMapping("/categorias/add")
     public ResponseEntity<CategoriaDTO> addCategoria(@RequestBody CategoriaDTO categoriaDTO) {
         CategoriaDTO addedCategoria = categoriaService.addCategoria(categoriaDTO);
         return new ResponseEntity<>(addedCategoria, HttpStatus.CREATED);
     }
 
-    @PutMapping("/items/{id}/update")
-    public ResponseEntity<CategoriaDTO> updateItem(@PathVariable Integer id, @RequestBody CategoriaDTO categoriaDTO) {
+    @PutMapping("/categoria/{id}/update")
+    public ResponseEntity<CategoriaDTO> updateCategoria(@PathVariable Integer id, @RequestBody CategoriaDTO categoriaDTO) {
         CategoriaDTO updatedCategoria = categoriaService.updateCategoria(id, categoriaDTO);
         return new ResponseEntity<>(updatedCategoria, HttpStatus.OK);
     }
 
-    @DeleteMapping("/items/{id}/delete")
-    public ResponseEntity<CategoriaDTO> deleteItem(@PathVariable Integer id) {
+    @DeleteMapping("/categoria/{id}/delete")
+    public ResponseEntity<CategoriaDTO> deleteCategoria(@PathVariable Integer id) {
         CategoriaDTO deletedCategoria = categoriaService.deleteCategoria(id);
         return new ResponseEntity<>(deletedCategoria, HttpStatus.OK);
     }
