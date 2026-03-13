@@ -30,5 +30,5 @@ public class ItemDTO {
 
     private LocalDate criadoEm = LocalDate.now();
     private LocalDate ultimoUpdate;
-    private boolean ativo;
+    private Boolean ativo;
 }

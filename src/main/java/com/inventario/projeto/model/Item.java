@@ -43,7 +43,17 @@ public class Item {
     private Double precoVenda;
     private Double taxa;
 
-    private LocalDate criadoEm = LocalDate.now();
+    private LocalDate criadoEm;
     private LocalDate ultimoUpdate;
-    private boolean ativo;
+    private Boolean ativo;
+
+    @PrePersist
+    public void prePersist() {
+        if (criadoEm == null) {
+            criadoEm = LocalDate.now();
+        }
+        if (ativo == null) {
+            ativo = true;
+        }
+    }
 }
