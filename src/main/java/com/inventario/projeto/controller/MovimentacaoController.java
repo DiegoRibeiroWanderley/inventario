@@ -43,4 +43,10 @@ public class MovimentacaoController {
         );
         return new ResponseEntity<>(movimentacao, HttpStatus.OK);
     }
+
+    @DeleteMapping("/movimentacao/{id}/delete")
+    public ResponseEntity<MovimentacaoDTO> deletarMovimentacao(@PathVariable Integer id) {
+        MovimentacaoDTO deletedMovimentacao = movimentacaoService.deletarMovimentacao(id);
+        return new ResponseEntity<>(deletedMovimentacao, HttpStatus.OK);
+    }
 }

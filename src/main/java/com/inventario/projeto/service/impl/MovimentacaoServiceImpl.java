@@ -75,4 +75,20 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
         movimentacao = movimentacaoRepository.save(movimentacao);
         return movimentacaoMapper.toMovimentacaoDTO(movimentacao);
     }
+
+    @Transactional
+    @Override
+    public MovimentacaoDTO deletarMovimentacao(Integer id) {
+        Movimentacao movimentacaoFromDB = movimentacaoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Movimentacao", id));
+
+        Item itemFromMovimentacao = itemRepository.findById(movimentacaoFromDB.getItem().getId())
+                .orElseThrow(() -> new NotFoundException("Item", movimentacaoFromDB.getItem().getId()));
+
+        itemFromMovimentacao.setQuantidadeEmEstoque(itemFromMovimentacao.getQuantidadeEmEstoque() - movimentacaoFromDB.getQuantidade());
+        itemRepository.save(itemFromMovimentacao);
+
+        movimentacaoRepository.delete(movimentacaoFromDB);
+        return movimentacaoMapper.toMovimentacaoDTO(movimentacaoFromDB);
+    }
 }
