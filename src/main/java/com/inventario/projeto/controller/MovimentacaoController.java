@@ -28,6 +28,12 @@ public class MovimentacaoController {
         return new ResponseEntity<>(movimentacoesDoItem, HttpStatus.OK);
     }
 
+    @GetMapping("/movimentacoes/mês/{mes}/ano/{ano}")
+    public ResponseEntity<List<MovimentacaoDTO>> buscarMovimentacaoPorMesAno(@PathVariable String mes, @PathVariable Integer ano){
+        List<MovimentacaoDTO> movimetacoesPorMesAno = movimentacaoService.buscarMovimentacaoPorMesAno(mes, ano);
+        return new ResponseEntity<>(movimetacoesPorMesAno, HttpStatus.OK);
+    }
+
     @PostMapping("/movimentacao/{tipo}/{quantidade}/item/{itemId}")
     public ResponseEntity<MovimentacaoDTO> entrada(@PathVariable String tipo, @PathVariable Integer itemId, @PathVariable Integer quantidade) {
         MovimentacaoDTO movimentacao = movimentacaoService.movimentacao(

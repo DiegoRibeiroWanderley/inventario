@@ -6,6 +6,7 @@ import com.inventario.projeto.exception.NotFoundException;
 import com.inventario.projeto.mapper.MovimentacaoMapper;
 import com.inventario.projeto.model.Item;
 import com.inventario.projeto.model.Movimentacao;
+import com.inventario.projeto.model.enums.Meses;
 import com.inventario.projeto.repositories.ItemRepository;
 import com.inventario.projeto.repositories.MovimentacaoRepository;
 import com.inventario.projeto.service.MovimentacaoService;
@@ -35,6 +36,19 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
     public List<MovimentacaoDTO> buscarMovimentacoesPorItem(Integer id) {
         List<Movimentacao> movimentacoesPorItem = movimentacaoRepository.findByItemId(id);
         return movimentacaoMapper.toMovimentacaoDTOs(movimentacoesPorItem);
+    }
+
+    @Override
+    public List<MovimentacaoDTO> buscarMovimentacaoPorMesAno(String mes, Integer ano) {
+        Meses mesEnum = Meses.valueOf(mes.toUpperCase());
+        int mesInt = mesEnum.ordinal() + 1;
+
+        LocalDate dataInicio = LocalDate.of(ano, mesInt, 1);
+        LocalDate dataFinal = dataInicio.withDayOfMonth(dataInicio.lengthOfMonth());
+
+        List<Movimentacao> movimentacoesPorMesAno = movimentacaoRepository.findMovimentacaoByDataMovimentacaoBetween(dataInicio, dataFinal);
+
+        return movimentacaoMapper.toMovimentacaoDTOs(movimentacoesPorMesAno);
     }
 
     @Transactional
