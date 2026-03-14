@@ -14,5 +14,7 @@ public interface MovimentacaoService {
 
     MovimentacaoDTO movimentacao(String tipo, Integer itemId, Integer quantidade);
 
+    MovimentacaoDTO updateMovimentacao(MovimentacaoDTO movimentacaoDTO, Integer id);
+
     MovimentacaoDTO deletarMovimentacao(Integer id);
 }

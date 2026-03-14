@@ -44,6 +44,12 @@ public class MovimentacaoController {
         return new ResponseEntity<>(movimentacao, HttpStatus.OK);
     }
 
+    @PutMapping("/movimentacao/{id}/update")
+    public ResponseEntity<MovimentacaoDTO> updateMovimentacao(@RequestBody MovimentacaoDTO movimentacao ,@PathVariable Integer id) {
+        MovimentacaoDTO updatedMovimentacao = movimentacaoService.updateMovimentacao(movimentacao, id);
+        return new ResponseEntity<>(updatedMovimentacao, HttpStatus.OK);
+    }
+
     @DeleteMapping("/movimentacao/{id}/delete")
     public ResponseEntity<MovimentacaoDTO> deletarMovimentacao(@PathVariable Integer id) {
         MovimentacaoDTO deletedMovimentacao = movimentacaoService.deletarMovimentacao(id);

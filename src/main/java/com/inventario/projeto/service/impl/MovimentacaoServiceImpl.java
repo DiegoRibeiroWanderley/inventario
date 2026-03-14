@@ -78,6 +78,39 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
 
     @Transactional
     @Override
+    public MovimentacaoDTO updateMovimentacao(MovimentacaoDTO movimentacaoDTO, Integer id) {
+        Movimentacao movimentacaoFromDB = movimentacaoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Movimentacao", id));
+
+        Movimentacao movimentacaoToBeUpdated = movimentacaoMapper.toMovimentacao(movimentacaoDTO);
+
+        if (movimentacaoToBeUpdated.getQuantidade() == null){
+
+            movimentacaoToBeUpdated.setQuantidade(movimentacaoFromDB.getQuantidade());
+
+            Item itemFromMovimentacao = itemRepository.findById(movimentacaoFromDB.getItem().getId())
+                    .orElseThrow(() -> new NotFoundException("Item", movimentacaoFromDB.getItem().getId()));
+
+            itemFromMovimentacao.setQuantidadeEmEstoque(
+                    itemFromMovimentacao.getQuantidadeEmEstoque()
+                    - movimentacaoFromDB.getQuantidade()
+                    + movimentacaoToBeUpdated.getQuantidade()
+            );
+
+            itemRepository.save(itemFromMovimentacao);
+        }
+
+        if (movimentacaoToBeUpdated.getReponsavel() == null) movimentacaoToBeUpdated.setReponsavel(movimentacaoFromDB.getReponsavel());
+        movimentacaoToBeUpdated.setDataMovimentacao(LocalDate.now());
+        movimentacaoToBeUpdated.setItem(movimentacaoFromDB.getItem());
+        movimentacaoToBeUpdated.setId(movimentacaoFromDB.getId());
+
+        Movimentacao movimentacaoUpdated = movimentacaoRepository.save(movimentacaoToBeUpdated);
+        return movimentacaoMapper.toMovimentacaoDTO(movimentacaoUpdated);
+    }
+
+    @Transactional
+    @Override
     public MovimentacaoDTO deletarMovimentacao(Integer id) {
         Movimentacao movimentacaoFromDB = movimentacaoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Movimentacao", id));
