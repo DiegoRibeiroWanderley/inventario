@@ -1,6 +1,6 @@
 package com.inventario.projeto.service.impl;
 
-import com.inventario.projeto.DTOs.MovimentacaoDTO;
+import com.inventario.projeto.payload.MovimentacaoDTO;
 import com.inventario.projeto.exception.APIException;
 import com.inventario.projeto.exception.NotFoundException;
 import com.inventario.projeto.mapper.MovimentacaoMapper;

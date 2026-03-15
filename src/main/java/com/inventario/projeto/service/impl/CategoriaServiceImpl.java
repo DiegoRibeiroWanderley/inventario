@@ -1,6 +1,6 @@
 package com.inventario.projeto.service.impl;
 
-import com.inventario.projeto.DTOs.CategoriaDTO;
+import com.inventario.projeto.payload.CategoriaDTO;
 import com.inventario.projeto.exception.NotFoundException;
 import com.inventario.projeto.mapper.CategoriaMapper;
 import com.inventario.projeto.model.Categoria;

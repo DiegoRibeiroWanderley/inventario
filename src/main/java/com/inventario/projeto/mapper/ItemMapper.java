@@ -1,6 +1,6 @@
 package com.inventario.projeto.mapper;
 
-import com.inventario.projeto.DTOs.ItemDTO;
+import com.inventario.projeto.payload.ItemDTO;
 import com.inventario.projeto.model.Item;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

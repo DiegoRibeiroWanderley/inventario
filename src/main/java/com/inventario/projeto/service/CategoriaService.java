@@ -1,6 +1,6 @@
 package com.inventario.projeto.service;
 
-import com.inventario.projeto.DTOs.CategoriaDTO;
+import com.inventario.projeto.payload.CategoriaDTO;
 
 import java.util.List;
 

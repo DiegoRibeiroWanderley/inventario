@@ -1,6 +1,6 @@
 package com.inventario.projeto.controller;
 
-import com.inventario.projeto.DTOs.MovimentacaoDTO;
+import com.inventario.projeto.payload.MovimentacaoDTO;
 import com.inventario.projeto.service.MovimentacaoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

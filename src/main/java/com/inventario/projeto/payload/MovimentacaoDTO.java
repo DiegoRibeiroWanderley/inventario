@@ -1,6 +1,5 @@
-package com.inventario.projeto.DTOs;
+package com.inventario.projeto.payload;
 
-import com.inventario.projeto.model.Item;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
