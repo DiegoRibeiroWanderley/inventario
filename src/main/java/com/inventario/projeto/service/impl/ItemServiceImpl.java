@@ -55,12 +55,12 @@ public class ItemServiceImpl implements ItemService {
         if (itemToBeUpdated.getPrecoCompra() == null) itemToBeUpdated.setPrecoCompra(itemFromDB.getPrecoCompra());
         if (itemToBeUpdated.getPrecoVenda() == null) itemToBeUpdated.setPrecoVenda(itemFromDB.getPrecoVenda());
         if (itemToBeUpdated.getTaxa() == null) itemToBeUpdated.setTaxa(itemFromDB.getTaxa());
+        if (itemToBeUpdated.getAtivo() == null) itemToBeUpdated.setAtivo(itemFromDB.getAtivo());
 
         itemToBeUpdated.setCategoria(itemFromDB.getCategoria());
         itemToBeUpdated.setUltimoUpdate(LocalDate.now());
         itemToBeUpdated.setQuantidadeEmEstoque(itemFromDB.getQuantidadeEmEstoque());
         itemToBeUpdated.setCriadoEm(itemFromDB.getCriadoEm());
-        itemToBeUpdated.setAtivo(itemFromDB.getAtivo());
         itemToBeUpdated.setId(itemFromDB.getId());
 
         Item itemUpdated = itemRepository.save(itemToBeUpdated);
