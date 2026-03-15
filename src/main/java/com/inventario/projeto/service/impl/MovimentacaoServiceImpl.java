@@ -87,14 +87,14 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
         if (movimentacaoToBeUpdated.getQuantidade() == null){
 
             movimentacaoToBeUpdated.setQuantidade(movimentacaoFromDB.getQuantidade());
-
+        } else {
             Item itemFromMovimentacao = itemRepository.findById(movimentacaoFromDB.getItem().getId())
                     .orElseThrow(() -> new NotFoundException("Item", movimentacaoFromDB.getItem().getId()));
 
             itemFromMovimentacao.setQuantidadeEmEstoque(
                     itemFromMovimentacao.getQuantidadeEmEstoque()
-                    - movimentacaoFromDB.getQuantidade()
-                    + movimentacaoToBeUpdated.getQuantidade()
+                            - movimentacaoFromDB.getQuantidade()
+                            + movimentacaoToBeUpdated.getQuantidade()
             );
 
             itemRepository.save(itemFromMovimentacao);
