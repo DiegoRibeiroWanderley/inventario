@@ -11,9 +11,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ItemResponse {
+public class Response<T> {
 
-    private List<ItemDTO> content;
+    private List<T> content;
     private Integer numeroDaPagina;
     private Integer tamanhoDaPagina;
     private Long totalDeElementos;
