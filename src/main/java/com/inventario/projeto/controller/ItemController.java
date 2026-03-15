@@ -1,6 +1,8 @@
 package com.inventario.projeto.controller;
 
-import com.inventario.projeto.DTOs.ItemDTO;
+import com.inventario.projeto.payload.ItemDTO;
+import com.inventario.projeto.model.enums.ParametrosDeBusca;
+import com.inventario.projeto.payload.ItemResponse;
 import com.inventario.projeto.service.ItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,8 +19,16 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping("/itens")
-    public ResponseEntity<List<ItemDTO>> getItems() {
-        List<ItemDTO> items = itemService.findAll();
+    public ResponseEntity<ItemResponse> getItems(
+            @RequestParam(name = "numeroDaPagina",
+                    defaultValue = ParametrosDeBusca.NUMERO_DA_PAGINA, required = false) Integer numeroDaPagina,
+            @RequestParam(name = "tamanhoDaPagina",
+                    defaultValue = ParametrosDeBusca.TAMANHO_DA_PAGINA, required = false) Integer tamanhoDaPagina,
+            @RequestParam(name = "ordenarItemsPor",
+                    defaultValue = ParametrosDeBusca.ORDENAR_ITEMS_POR, required = false) String ordenarItemsPor,
+            @RequestParam(name = "ordem",
+                    defaultValue = ParametrosDeBusca.ORDEM, required = false) String ordem) {
+        ItemResponse items = itemService.findAll(numeroDaPagina, tamanhoDaPagina, ordenarItemsPor, ordem);
         return new ResponseEntity<>(items, HttpStatus.OK);
     }
 

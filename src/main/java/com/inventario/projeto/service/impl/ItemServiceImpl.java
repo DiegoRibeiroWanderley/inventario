@@ -1,14 +1,18 @@
 package com.inventario.projeto.service.impl;
 
-import com.inventario.projeto.DTOs.ItemDTO;
+import com.inventario.projeto.payload.ItemDTO;
 import com.inventario.projeto.exception.NotFoundException;
 import com.inventario.projeto.mapper.ItemMapper;
 import com.inventario.projeto.model.Categoria;
 import com.inventario.projeto.model.Item;
+import com.inventario.projeto.payload.ItemResponse;
 import com.inventario.projeto.repositories.CategoriaRepository;
 import com.inventario.projeto.repositories.ItemRepository;
 import com.inventario.projeto.service.ItemService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -23,9 +27,25 @@ public class ItemServiceImpl implements ItemService {
     private final ItemMapper itemMapper;
 
     @Override
-    public List<ItemDTO> findAll() {
-        List<Item> items = itemRepository.findAll();
-        return itemMapper.toItemDTOs(items);
+    public ItemResponse findAll(Integer numeroDaPagina, Integer tamanhoDaPagina, String ordenarItemsPor, String ordem) {
+
+        Sort sort = ordem.equalsIgnoreCase("asc")
+                ? Sort.by(ordenarItemsPor).ascending()
+                : Sort.by(ordenarItemsPor).descending();
+
+        PageRequest paginacao = PageRequest.of(numeroDaPagina, tamanhoDaPagina, sort);
+        Page<Item> pagina = itemRepository.findAll(paginacao);
+
+        List<Item> items = pagina.getContent();
+
+        return ItemResponse.builder()
+                .content(itemMapper.toItemDTOs(items))
+                .numeroDaPagina(pagina.getNumber())
+                .tamanhoDaPagina(pagina.getSize())
+                .totalDeElementos(pagina.getTotalElements())
+                .totalDePaginas(pagina.getTotalPages())
+                .ultimaPagina(pagina.isLast())
+                .build();
     }
 
     @Override
