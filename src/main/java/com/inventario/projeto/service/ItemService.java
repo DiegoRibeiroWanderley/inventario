@@ -1,13 +1,11 @@
 package com.inventario.projeto.service;
 
 import com.inventario.projeto.payload.ItemDTO;
-import com.inventario.projeto.payload.ItemResponse;
-
-import java.util.List;
+import com.inventario.projeto.payload.Response;
 
 public interface ItemService {
 
-    ItemResponse findAll(Integer numeroDaPagina, Integer tamanhoDaPagina, String ordenarItemsPor, String ordem);
+    Response<ItemDTO> findAll(Integer numeroDaPagina, Integer tamanhoDaPagina, String ordenarItemsPor, String ordem);
 
     ItemDTO addItem(ItemDTO itemDTO, Integer categoriaId);
 

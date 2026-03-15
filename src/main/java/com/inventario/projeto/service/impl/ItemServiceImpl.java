@@ -1,11 +1,11 @@
 package com.inventario.projeto.service.impl;
 
-import com.inventario.projeto.payload.ItemDTO;
 import com.inventario.projeto.exception.NotFoundException;
 import com.inventario.projeto.mapper.ItemMapper;
 import com.inventario.projeto.model.Categoria;
 import com.inventario.projeto.model.Item;
-import com.inventario.projeto.payload.ItemResponse;
+import com.inventario.projeto.payload.ItemDTO;
+import com.inventario.projeto.payload.Response;
 import com.inventario.projeto.repositories.CategoriaRepository;
 import com.inventario.projeto.repositories.ItemRepository;
 import com.inventario.projeto.service.ItemService;
@@ -27,7 +27,7 @@ public class ItemServiceImpl implements ItemService {
     private final ItemMapper itemMapper;
 
     @Override
-    public ItemResponse findAll(Integer numeroDaPagina, Integer tamanhoDaPagina, String ordenarItemsPor, String ordem) {
+    public Response<ItemDTO> findAll(Integer numeroDaPagina, Integer tamanhoDaPagina, String ordenarItemsPor, String ordem) {
 
         Sort sort = ordem.equalsIgnoreCase("asc")
                 ? Sort.by(ordenarItemsPor).ascending()
@@ -38,7 +38,7 @@ public class ItemServiceImpl implements ItemService {
 
         List<Item> items = pagina.getContent();
 
-        return ItemResponse.builder()
+        return Response.<ItemDTO>builder()
                 .content(itemMapper.toItemDTOs(items))
                 .numeroDaPagina(pagina.getNumber())
                 .tamanhoDaPagina(pagina.getSize())

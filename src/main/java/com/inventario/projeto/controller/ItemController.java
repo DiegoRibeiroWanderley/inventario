@@ -1,15 +1,13 @@
 package com.inventario.projeto.controller;
 
-import com.inventario.projeto.payload.ItemDTO;
 import com.inventario.projeto.model.enums.ParametrosDeBusca;
-import com.inventario.projeto.payload.ItemResponse;
+import com.inventario.projeto.payload.ItemDTO;
+import com.inventario.projeto.payload.Response;
 import com.inventario.projeto.service.ItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -19,7 +17,7 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping("/itens")
-    public ResponseEntity<ItemResponse> getItems(
+    public ResponseEntity<Response<ItemDTO>> getItems(
             @RequestParam(name = "numeroDaPagina",
                     defaultValue = ParametrosDeBusca.NUMERO_DA_PAGINA, required = false) Integer numeroDaPagina,
             @RequestParam(name = "tamanhoDaPagina",
@@ -28,7 +26,7 @@ public class ItemController {
                     defaultValue = ParametrosDeBusca.ORDENAR_ITEMS_POR, required = false) String ordenarItemsPor,
             @RequestParam(name = "ordem",
                     defaultValue = ParametrosDeBusca.ORDEM, required = false) String ordem) {
-        ItemResponse items = itemService.findAll(numeroDaPagina, tamanhoDaPagina, ordenarItemsPor, ordem);
+        Response<ItemDTO> items = itemService.findAll(numeroDaPagina, tamanhoDaPagina, ordenarItemsPor, ordem);
         return new ResponseEntity<>(items, HttpStatus.OK);
     }
 
