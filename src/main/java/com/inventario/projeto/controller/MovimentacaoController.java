@@ -1,6 +1,8 @@
 package com.inventario.projeto.controller;
 
+import com.inventario.projeto.model.enums.ParametrosDeBusca;
 import com.inventario.projeto.payload.MovimentacaoDTO;
+import com.inventario.projeto.payload.Response;
 import com.inventario.projeto.service.MovimentacaoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,20 +19,49 @@ public class MovimentacaoController {
     private final MovimentacaoService movimentacaoService;
 
     @GetMapping("/movimentacoes")
-    public ResponseEntity<List<MovimentacaoDTO>> todasMovimentacoes() {
-        List<MovimentacaoDTO> movimentacoes = movimentacaoService.todasMovimentacoes();
+    public ResponseEntity<Response<MovimentacaoDTO>> todasMovimentacoes(
+            @RequestParam(name = "numeroDaPagina",
+                    defaultValue = ParametrosDeBusca.NUMERO_DA_PAGINA, required = false) Integer numeroDaPagina,
+            @RequestParam(name = "tamanhoDaPagina",
+                    defaultValue = ParametrosDeBusca.TAMANHO_DA_PAGINA, required = false) Integer tamanhoDaPagina,
+            @RequestParam(name = "ordenarMovimentacoesPor",
+                    defaultValue = ParametrosDeBusca.ORDENAR_MOVIMENTACOES_POR, required = false) String ordenarMovimentacoesPor,
+            @RequestParam(name = "ordem",
+                    defaultValue = ParametrosDeBusca.ORDEM, required = false) String ordem) {
+        Response<MovimentacaoDTO> movimentacoes = movimentacaoService.todasMovimentacoes(numeroDaPagina, tamanhoDaPagina, ordenarMovimentacoesPor, ordem);
         return new ResponseEntity<>(movimentacoes, HttpStatus.OK);
     }
 
     @GetMapping("/movimentacoes/item/{id}")
-    public ResponseEntity<List<MovimentacaoDTO>> buscarMovimentacaoPorItem(@PathVariable Integer id) {
-        List<MovimentacaoDTO> movimentacoesDoItem = movimentacaoService.buscarMovimentacoesPorItem(id);
+    public ResponseEntity<Response<MovimentacaoDTO>> buscarMovimentacaoPorItem(
+            @PathVariable Integer id,
+            @RequestParam(name = "numeroDaPagina",
+                    defaultValue = ParametrosDeBusca.NUMERO_DA_PAGINA, required = false) Integer numeroDaPagina,
+            @RequestParam(name = "tamanhoDaPagina",
+                    defaultValue = ParametrosDeBusca.TAMANHO_DA_PAGINA, required = false) Integer tamanhoDaPagina,
+            @RequestParam(name = "ordenarMovimentacoesPor",
+                    defaultValue = ParametrosDeBusca.ORDENAR_MOVIMENTACOES_POR, required = false) String ordenarMovimentacoesPor,
+            @RequestParam(name = "ordem",
+                    defaultValue = ParametrosDeBusca.ORDEM, required = false) String ordem) {
+        Response<MovimentacaoDTO> movimentacoesDoItem = movimentacaoService.buscarMovimentacoesPorItem(
+                id, numeroDaPagina, tamanhoDaPagina, ordenarMovimentacoesPor, ordem);
         return new ResponseEntity<>(movimentacoesDoItem, HttpStatus.OK);
     }
 
     @GetMapping("/movimentacoes/mês/{mes}/ano/{ano}")
-    public ResponseEntity<List<MovimentacaoDTO>> buscarMovimentacaoPorMesAno(@PathVariable String mes, @PathVariable Integer ano){
-        List<MovimentacaoDTO> movimetacoesPorMesAno = movimentacaoService.buscarMovimentacaoPorMesAno(mes, ano);
+    public ResponseEntity<Response<MovimentacaoDTO>> buscarMovimentacaoPorMesAno(
+            @PathVariable String mes,
+            @PathVariable Integer ano,
+            @RequestParam(name = "numeroDaPagina",
+                    defaultValue = ParametrosDeBusca.NUMERO_DA_PAGINA, required = false) Integer numeroDaPagina,
+            @RequestParam(name = "tamanhoDaPagina",
+                    defaultValue = ParametrosDeBusca.TAMANHO_DA_PAGINA, required = false) Integer tamanhoDaPagina,
+            @RequestParam(name = "ordenarMovimentacoesPor",
+                    defaultValue = ParametrosDeBusca.ORDENAR_MOVIMENTACOES_POR, required = false) String ordenarMovimentacoesPor,
+            @RequestParam(name = "ordem",
+                    defaultValue = ParametrosDeBusca.ORDEM, required = false) String ordem) {
+        Response<MovimentacaoDTO> movimetacoesPorMesAno = movimentacaoService.buscarMovimentacaoPorMesAno(
+                mes, ano, numeroDaPagina, tamanhoDaPagina, ordenarMovimentacoesPor, ordem);
         return new ResponseEntity<>(movimetacoesPorMesAno, HttpStatus.OK);
     }
 
@@ -45,7 +76,7 @@ public class MovimentacaoController {
     }
 
     @PutMapping("/movimentacao/{id}/update")
-    public ResponseEntity<MovimentacaoDTO> updateMovimentacao(@RequestBody MovimentacaoDTO movimentacao ,@PathVariable Integer id) {
+    public ResponseEntity<MovimentacaoDTO> updateMovimentacao(@RequestBody MovimentacaoDTO movimentacao, @PathVariable Integer id) {
         MovimentacaoDTO updatedMovimentacao = movimentacaoService.updateMovimentacao(movimentacao, id);
         return new ResponseEntity<>(updatedMovimentacao, HttpStatus.OK);
     }

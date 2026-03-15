@@ -1,16 +1,17 @@
 package com.inventario.projeto.service;
 
 import com.inventario.projeto.payload.MovimentacaoDTO;
+import com.inventario.projeto.payload.Response;
 
 import java.util.List;
 
 public interface MovimentacaoService {
 
-    List<MovimentacaoDTO> todasMovimentacoes();
+    Response<MovimentacaoDTO> todasMovimentacoes(Integer numeroDaPagina, Integer tamanhoDaPagina, String ordenarMovimentacoesPor, String ordem);
 
-    List<MovimentacaoDTO> buscarMovimentacoesPorItem(Integer id);
+    Response<MovimentacaoDTO> buscarMovimentacoesPorItem(Integer id, Integer numeroDaPagina, Integer tamanhoDaPagina, String ordenarMovimentacoesPor, String ordem);
 
-    List<MovimentacaoDTO> buscarMovimentacaoPorMesAno(String mes, Integer ano);
+    Response<MovimentacaoDTO> buscarMovimentacaoPorMesAno(String mes, Integer ano, Integer numeroDaPagina, Integer tamanhoDaPagina, String ordenarMovimentacoesPor, String ordem);
 
     MovimentacaoDTO movimentacao(String tipo, Integer itemId, Integer quantidade);
 

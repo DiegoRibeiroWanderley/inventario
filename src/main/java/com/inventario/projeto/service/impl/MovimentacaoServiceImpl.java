@@ -7,11 +7,16 @@ import com.inventario.projeto.mapper.MovimentacaoMapper;
 import com.inventario.projeto.model.Item;
 import com.inventario.projeto.model.Movimentacao;
 import com.inventario.projeto.model.enums.Meses;
+import com.inventario.projeto.payload.Response;
 import com.inventario.projeto.repositories.ItemRepository;
 import com.inventario.projeto.repositories.MovimentacaoRepository;
 import com.inventario.projeto.service.MovimentacaoService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -27,28 +32,71 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
     private final MovimentacaoMapper movimentacaoMapper;
 
     @Override
-    public List<MovimentacaoDTO> todasMovimentacoes() {
-        List<Movimentacao> movimentacoes = movimentacaoRepository.findAll();
-        return movimentacaoMapper.toMovimentacaoDTOs(movimentacoes);
+    public Response<MovimentacaoDTO> todasMovimentacoes(Integer numeroDaPagina, Integer tamanhoDaPagina, String ordenarMovimentacoesPor, String ordem) {
+
+        Sort sort = ordem.equalsIgnoreCase("asc")
+                ? Sort.by(ordenarMovimentacoesPor).ascending()
+                : Sort.by(ordenarMovimentacoesPor).descending();
+
+        Pageable pageable = PageRequest.of(numeroDaPagina, tamanhoDaPagina, sort);
+        Page<Movimentacao> pagina = movimentacaoRepository.findAll(pageable);
+        List<Movimentacao> movimentacoes = pagina.getContent();
+
+        return Response.<MovimentacaoDTO>builder()
+                .content(movimentacaoMapper.toMovimentacaoDTOs(movimentacoes))
+                .numeroDaPagina(pagina.getNumber())
+                .tamanhoDaPagina(pagina.getSize())
+                .totalDeElementos(pagina.getTotalElements())
+                .totalDePaginas(pagina.getTotalPages())
+                .ultimaPagina(pagina.isLast())
+                .build();
     }
 
     @Override
-    public List<MovimentacaoDTO> buscarMovimentacoesPorItem(Integer id) {
-        List<Movimentacao> movimentacoesPorItem = movimentacaoRepository.findByItemId(id);
-        return movimentacaoMapper.toMovimentacaoDTOs(movimentacoesPorItem);
+    public Response<MovimentacaoDTO> buscarMovimentacoesPorItem(Integer id, Integer numeroDaPagina, Integer tamanhoDaPagina, String ordenarMovimentacoesPor, String ordem) {
+
+        Sort sort = ordem.equalsIgnoreCase("asc")
+                ? Sort.by(ordenarMovimentacoesPor).ascending()
+                : Sort.by(ordenarMovimentacoesPor).descending();
+
+        Pageable pageable = PageRequest.of(numeroDaPagina, tamanhoDaPagina, sort);
+        Page<Movimentacao> pagina = movimentacaoRepository.findByItemId(id, pageable);
+        List<Movimentacao> movimentacoesPorItem = pagina.getContent();
+
+        return Response.<MovimentacaoDTO>builder()
+                .content(movimentacaoMapper.toMovimentacaoDTOs(movimentacoesPorItem))
+                .numeroDaPagina(pagina.getNumber())
+                .tamanhoDaPagina(pagina.getSize())
+                .totalDeElementos(pagina.getTotalElements())
+                .totalDePaginas(pagina.getTotalPages())
+                .ultimaPagina(pagina.isLast())
+                .build();
     }
 
     @Override
-    public List<MovimentacaoDTO> buscarMovimentacaoPorMesAno(String mes, Integer ano) {
+    public Response<MovimentacaoDTO> buscarMovimentacaoPorMesAno(String mes, Integer ano, Integer numeroDaPagina, Integer tamanhoDaPagina, String ordenarMovimentacoesPor, String ordem) {
         Meses mesEnum = Meses.valueOf(mes.toUpperCase());
         int mesInt = mesEnum.ordinal() + 1;
 
         LocalDate dataInicio = LocalDate.of(ano, mesInt, 1);
         LocalDate dataFinal = dataInicio.withDayOfMonth(dataInicio.lengthOfMonth());
 
-        List<Movimentacao> movimentacoesPorMesAno = movimentacaoRepository.findMovimentacaoByDataMovimentacaoBetween(dataInicio, dataFinal);
+        Sort sort = ordem.equalsIgnoreCase("asc")
+                ? Sort.by(ordenarMovimentacoesPor).ascending()
+                : Sort.by(ordenarMovimentacoesPor).descending();
 
-        return movimentacaoMapper.toMovimentacaoDTOs(movimentacoesPorMesAno);
+        Pageable pageable = PageRequest.of(numeroDaPagina, tamanhoDaPagina, sort);
+        Page<Movimentacao> pagina = movimentacaoRepository.findMovimentacaoByDataMovimentacaoBetween(dataInicio, dataFinal, pageable);
+        List<Movimentacao> movimentacoesPorMesAno = pagina.getContent();
+
+        return Response.<MovimentacaoDTO>builder()
+                .content(movimentacaoMapper.toMovimentacaoDTOs(movimentacoesPorMesAno))
+                .numeroDaPagina(pagina.getNumber())
+                .tamanhoDaPagina(pagina.getSize())
+                .totalDeElementos(pagina.getTotalElements())
+                .totalDePaginas(pagina.getTotalPages())
+                .ultimaPagina(pagina.isLast())
+                .build();
     }
 
     @Transactional
