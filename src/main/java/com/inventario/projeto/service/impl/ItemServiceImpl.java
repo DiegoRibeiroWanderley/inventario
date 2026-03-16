@@ -49,6 +49,27 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    public Response<ItemDTO> findItemsEmAlerta(Integer numeroDaPagina, Integer tamanhoDaPagina, String ordenarItemsPor, String ordem) {
+        Sort sort = ordem.equalsIgnoreCase("asc")
+                ? Sort.by(ordenarItemsPor).ascending()
+                : Sort.by(ordenarItemsPor).descending();
+
+        PageRequest paginacao = PageRequest.of(numeroDaPagina, tamanhoDaPagina, sort);
+        Page<Item> pagina = itemRepository.findItemEmAlerta(paginacao);
+
+        List<Item> items = pagina.getContent();
+
+        return Response.<ItemDTO>builder()
+                .content(itemMapper.toItemDTOs(items))
+                .numeroDaPagina(pagina.getNumber())
+                .tamanhoDaPagina(pagina.getSize())
+                .totalDeElementos(pagina.getTotalElements())
+                .totalDePaginas(pagina.getTotalPages())
+                .ultimaPagina(pagina.isLast())
+                .build();
+    }
+
+    @Override
     public ItemDTO addItem(ItemDTO itemDTO, Integer categoriaId) {
         Categoria categoria = categoriaRepository.findById(categoriaId)
                 .orElseThrow(() -> new NotFoundException("Categoria", categoriaId));

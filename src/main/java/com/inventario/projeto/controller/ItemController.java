@@ -30,6 +30,20 @@ public class ItemController {
         return new ResponseEntity<>(items, HttpStatus.OK);
     }
 
+    @GetMapping("/itens/alerta")
+    public ResponseEntity<Response<ItemDTO>> getItemsEmAlerta(
+            @RequestParam(name = "numeroDaPagina",
+                    defaultValue = ParametrosDeBusca.NUMERO_DA_PAGINA, required = false) Integer numeroDaPagina,
+            @RequestParam(name = "tamanhoDaPagina",
+                    defaultValue = ParametrosDeBusca.TAMANHO_DA_PAGINA, required = false) Integer tamanhoDaPagina,
+            @RequestParam(name = "ordenarItemsPor",
+                    defaultValue = ParametrosDeBusca.ORDENAR_ITEMS_POR, required = false) String ordenarItemsPor,
+            @RequestParam(name = "ordem",
+                    defaultValue = ParametrosDeBusca.ORDEM, required = false) String ordem) {
+        Response<ItemDTO> items = itemService.findItemsEmAlerta(numeroDaPagina, tamanhoDaPagina, ordenarItemsPor, ordem);
+        return new ResponseEntity<>(items, HttpStatus.OK);
+    }
+
     @PostMapping("/itens/add/categoria/{categoriaId}")
     public ResponseEntity<ItemDTO> addItem(@RequestBody ItemDTO itemDTO, @PathVariable Integer categoriaId) {
         ItemDTO addedItem = itemService.addItem(itemDTO, categoriaId);
