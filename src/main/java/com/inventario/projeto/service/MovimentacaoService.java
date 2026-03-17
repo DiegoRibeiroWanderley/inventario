@@ -1,9 +1,7 @@
 package com.inventario.projeto.service;
 
-import com.inventario.projeto.payload.MovimentacaoDTO;
+import com.inventario.projeto.payload.DTO.MovimentacaoDTO;
 import com.inventario.projeto.payload.Response;
-
-import java.util.List;
 
 public interface MovimentacaoService {
 

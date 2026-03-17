@@ -1,6 +1,6 @@
 package com.inventario.projeto.service;
 
-import com.inventario.projeto.payload.ItemDTO;
+import com.inventario.projeto.payload.DTO.ItemDTO;
 import com.inventario.projeto.payload.Response;
 
 public interface ItemService {

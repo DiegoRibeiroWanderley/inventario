@@ -1,7 +1,7 @@
 package com.inventario.projeto.controller;
 
 import com.inventario.projeto.model.enums.ParametrosDeBusca;
-import com.inventario.projeto.payload.ItemDTO;
+import com.inventario.projeto.payload.DTO.ItemDTO;
 import com.inventario.projeto.payload.Response;
 import com.inventario.projeto.service.ItemService;
 import lombok.RequiredArgsConstructor;

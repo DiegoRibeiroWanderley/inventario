@@ -1,15 +1,13 @@
 package com.inventario.projeto.controller;
 
 import com.inventario.projeto.model.enums.ParametrosDeBusca;
-import com.inventario.projeto.payload.MovimentacaoDTO;
+import com.inventario.projeto.payload.DTO.MovimentacaoDTO;
 import com.inventario.projeto.payload.Response;
 import com.inventario.projeto.service.MovimentacaoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api")

@@ -4,7 +4,7 @@ import com.inventario.projeto.exception.NotFoundException;
 import com.inventario.projeto.mapper.ItemMapper;
 import com.inventario.projeto.model.Categoria;
 import com.inventario.projeto.model.Item;
-import com.inventario.projeto.payload.ItemDTO;
+import com.inventario.projeto.payload.DTO.ItemDTO;
 import com.inventario.projeto.payload.Response;
 import com.inventario.projeto.repositories.CategoriaRepository;
 import com.inventario.projeto.repositories.ItemRepository;
