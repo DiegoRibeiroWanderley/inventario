@@ -109,6 +109,13 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
 
         itemFromDB.setQuantidadeEmEstoque(itemFromDB.getQuantidadeEmEstoque() + qtde);
         itemFromDB.setUltimoUpdate(LocalDate.now());
+        if (tipo.equalsIgnoreCase("saida")) itemFromDB.setSaidas(itemFromDB.getSaidas() + quantidade);
+        if (tipo.equalsIgnoreCase("entrada")) itemFromDB.setEntradas(itemFromDB.getEntradas() + quantidade);
+
+        double precoVenda = itemFromDB.getPrecoVenda() - itemFromDB.getPrecoCompra();
+        double precoVendaComTaxa = precoVenda + precoVenda * (itemFromDB.getTaxa() / 100);
+
+        itemFromDB.setValorGanho(itemFromDB.getSaidas() * precoVendaComTaxa);
 
         if (itemFromDB.getQuantidadeEmEstoque() < 0) {
             throw new APIException("Não há estoque sufuciente para essa movimentação");
@@ -118,7 +125,8 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
 
         Movimentacao movimentacao = new Movimentacao();
         movimentacao.setItem(itemFromDB);
-        movimentacao.setQuantidade(qtde);
+        movimentacao.setQuantidade(quantidade);
+        movimentacao.setTipo(tipo);
 
         movimentacao = movimentacaoRepository.save(movimentacao);
         return movimentacaoMapper.toMovimentacaoDTO(movimentacao);
@@ -132,6 +140,8 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
 
         Movimentacao movimentacaoToBeUpdated = movimentacaoMapper.toMovimentacao(movimentacaoDTO);
 
+        if (movimentacaoToBeUpdated.getTipo() == null) movimentacaoToBeUpdated.setTipo(movimentacaoFromDB.getTipo());
+
         if (movimentacaoToBeUpdated.getQuantidade() == null){
 
             movimentacaoToBeUpdated.setQuantidade(movimentacaoFromDB.getQuantidade());
@@ -139,11 +149,33 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
             Item itemFromMovimentacao = itemRepository.findById(movimentacaoFromDB.getItem().getId())
                     .orElseThrow(() -> new NotFoundException("Item", movimentacaoFromDB.getItem().getId()));
 
+            if (movimentacaoToBeUpdated.getTipo().equals(movimentacaoFromDB.getTipo())) {
+                if (movimentacaoToBeUpdated.getTipo().equalsIgnoreCase("entrada")) {
+                    itemFromMovimentacao.setEntradas(itemFromMovimentacao.getEntradas() - movimentacaoFromDB.getQuantidade() + movimentacaoToBeUpdated.getQuantidade());
+                }
+                if (movimentacaoToBeUpdated.getTipo().equalsIgnoreCase("saida")) {
+                    itemFromMovimentacao.setSaidas(itemFromMovimentacao.getSaidas() - movimentacaoFromDB.getQuantidade() + movimentacaoToBeUpdated.getQuantidade());
+                }
+            } else {
+                if (movimentacaoToBeUpdated.getTipo().equalsIgnoreCase("entrada")) {
+                    itemFromMovimentacao.setSaidas(itemFromMovimentacao.getSaidas() - movimentacaoFromDB.getQuantidade());
+                    itemFromMovimentacao.setEntradas(itemFromMovimentacao.getEntradas() + movimentacaoToBeUpdated.getQuantidade());
+                }
+                if (movimentacaoToBeUpdated.getTipo().equalsIgnoreCase("saida")) {
+                    itemFromMovimentacao.setEntradas(itemFromMovimentacao.getEntradas() - movimentacaoFromDB.getQuantidade());
+                    itemFromMovimentacao.setSaidas(itemFromMovimentacao.getSaidas() + movimentacaoToBeUpdated.getQuantidade());
+                }
+            }
+
             itemFromMovimentacao.setQuantidadeEmEstoque(
                     itemFromMovimentacao.getQuantidadeEmEstoque()
-                            - movimentacaoFromDB.getQuantidade()
-                            + movimentacaoToBeUpdated.getQuantidade()
+                            - (movimentacaoFromDB.getTipo().equalsIgnoreCase("entrada") ? movimentacaoFromDB.getQuantidade() : -movimentacaoFromDB.getQuantidade())
+                            + (movimentacaoToBeUpdated.getTipo().equalsIgnoreCase("entrada") ? movimentacaoToBeUpdated.getQuantidade() : -movimentacaoToBeUpdated.getQuantidade())
             );
+
+            double precoVenda = itemFromMovimentacao.getPrecoVenda() - itemFromMovimentacao.getPrecoCompra();
+            double precoComTaxa = (precoVenda + (precoVenda * itemFromMovimentacao.getTaxa()/100)) * itemFromMovimentacao.getSaidas();
+            itemFromMovimentacao.setValorGanho(precoComTaxa);
 
             itemRepository.save(itemFromMovimentacao);
         }
@@ -167,6 +199,12 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
                 .orElseThrow(() -> new NotFoundException("Item", movimentacaoFromDB.getItem().getId()));
 
         itemFromMovimentacao.setQuantidadeEmEstoque(itemFromMovimentacao.getQuantidadeEmEstoque() - movimentacaoFromDB.getQuantidade());
+        if (movimentacaoFromDB.getTipo().equalsIgnoreCase("entrada")) {
+            itemFromMovimentacao.setEntradas(itemFromMovimentacao.getEntradas()  - movimentacaoFromDB.getQuantidade());
+        } else {
+            itemFromMovimentacao.setSaidas(itemFromMovimentacao.getSaidas() - movimentacaoFromDB.getQuantidade());
+        }
+
         itemRepository.save(itemFromMovimentacao);
 
         movimentacaoRepository.delete(movimentacaoFromDB);

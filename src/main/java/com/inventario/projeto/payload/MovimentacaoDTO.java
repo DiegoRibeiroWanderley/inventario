@@ -13,6 +13,7 @@ public class MovimentacaoDTO {
 
     private Integer id;
     private ItemDTO itemDTO;
+    private String tipo;
     private Integer quantidade;
     private LocalDate dataMovimentacao;
     private String reponsavel;

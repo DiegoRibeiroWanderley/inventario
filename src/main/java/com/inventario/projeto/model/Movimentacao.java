@@ -21,6 +21,7 @@ public class Movimentacao {
     @JoinColumn(name = "item_id")
     private Item item;
 
+    String tipo;
     private Integer quantidade;
     private LocalDate dataMovimentacao = LocalDate.now();
     private String reponsavel;

@@ -42,6 +42,10 @@ public class Item {
     private Double precoCompra;
     private Double precoVenda;
     private Double taxa;
+    private Double valorGanho;
+
+    private Integer saidas;
+    private Integer entradas;
 
     private LocalDate criadoEm;
     private LocalDate ultimoUpdate;
@@ -49,11 +53,9 @@ public class Item {
 
     @PrePersist
     public void prePersist() {
-        if (criadoEm == null) {
-            criadoEm = LocalDate.now();
-        }
-        if (ativo == null) {
-            ativo = true;
-        }
+        if (criadoEm == null) criadoEm = LocalDate.now();
+        if (ativo == null) ativo = true;
+        if (saidas == null) saidas = 0;
+        if (entradas == null) entradas = 0;
     }
 }

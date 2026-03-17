@@ -27,6 +27,10 @@ public class ItemDTO {
     private Double precoCompra;
     private Double precoVenda;
     private Double taxa;
+    private Double valorGanho;
+
+    private Integer saidas;
+    private Integer entradas;
 
     private LocalDate criadoEm = LocalDate.now();
     private LocalDate ultimoUpdate;
