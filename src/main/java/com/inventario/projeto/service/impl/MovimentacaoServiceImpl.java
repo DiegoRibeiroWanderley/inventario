@@ -198,11 +198,12 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
         Item itemFromMovimentacao = itemRepository.findById(movimentacaoFromDB.getItem().getId())
                 .orElseThrow(() -> new NotFoundException("Item", movimentacaoFromDB.getItem().getId()));
 
-        itemFromMovimentacao.setQuantidadeEmEstoque(itemFromMovimentacao.getQuantidadeEmEstoque() - movimentacaoFromDB.getQuantidade());
         if (movimentacaoFromDB.getTipo().equalsIgnoreCase("entrada")) {
             itemFromMovimentacao.setEntradas(itemFromMovimentacao.getEntradas()  - movimentacaoFromDB.getQuantidade());
+            itemFromMovimentacao.setQuantidadeEmEstoque(itemFromMovimentacao.getQuantidadeEmEstoque() - movimentacaoFromDB.getQuantidade());
         } else {
             itemFromMovimentacao.setSaidas(itemFromMovimentacao.getSaidas() - movimentacaoFromDB.getQuantidade());
+            itemFromMovimentacao.setQuantidadeEmEstoque(itemFromMovimentacao.getQuantidadeEmEstoque() + movimentacaoFromDB.getQuantidade());
         }
 
         itemRepository.save(itemFromMovimentacao);
