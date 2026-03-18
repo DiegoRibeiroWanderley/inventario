@@ -4,12 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class EntregaDTO {
-    private Long entregaId;
+    private Integer entregaId;
     private Integer movimentacaoId;
+    private LocalDateTime dataDespacho;
     private Double valorFrete;
     private String status;
     private String transportadora;
