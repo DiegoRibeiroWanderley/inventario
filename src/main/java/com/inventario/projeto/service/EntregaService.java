@@ -13,7 +13,7 @@ public interface EntregaService {
 
     Response<EntregaDTO> findByPeriodo(Integer numeroDaPagina, Integer tamanhoDaPagina, String ordenarEntradasPor, String ordem, String mesInicio, Integer anoInicio, String mesFim, Integer anoFim);
 
-    EntregaDTO createEntrega(EntregaDTO entregaDTO);
+    EntregaDTO createEntrega(EntregaDTO entregaDTO, Integer itemId, Integer quantidade);
 
     EntregaDTO updateEntrega(EntregaDTO entregaDTO, Integer id);
 
