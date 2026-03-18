@@ -16,7 +16,7 @@ public class Entrega {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long entregaId;
+    private Integer entregaId;
 
     @ManyToOne
     @JoinColumn(name = "movimentaco_id")
