@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 
 @Repository
-public interface EntregaRepository extends JpaRepository<Entrega, Long> {
+public interface EntregaRepository extends JpaRepository<Entrega, Integer> {
     Page<Entrega> findEntregaByMovimentacao_Id(Integer movimentacaoId, Pageable paginacao);
 
     Page<Entrega> findEntregaByMovimentacao_Item_Id(Integer itemId, Pageable paginacao);
