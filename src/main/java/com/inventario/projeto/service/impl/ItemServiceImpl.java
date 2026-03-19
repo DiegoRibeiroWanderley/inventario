@@ -6,6 +6,7 @@ import com.inventario.projeto.model.Categoria;
 import com.inventario.projeto.model.Item;
 import com.inventario.projeto.payload.DTO.ItemDTO;
 import com.inventario.projeto.payload.Response;
+import com.inventario.projeto.payload.ResponseSistemaABC;
 import com.inventario.projeto.repositories.CategoriaRepository;
 import com.inventario.projeto.repositories.ItemRepository;
 import com.inventario.projeto.service.ItemService;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -61,6 +63,50 @@ public class ItemServiceImpl implements ItemService {
 
         return Response.<ItemDTO>builder()
                 .content(itemMapper.toItemDTOs(items))
+                .numeroDaPagina(pagina.getNumber())
+                .tamanhoDaPagina(pagina.getSize())
+                .totalDeElementos(pagina.getTotalElements())
+                .totalDePaginas(pagina.getTotalPages())
+                .ultimaPagina(pagina.isLast())
+                .build();
+    }
+
+    @Override
+    public ResponseSistemaABC findItemsSistemaABC(Integer numeroDaPagina, Integer tamanhoDaPagina, String ordenarItemsPor, String ordem) {
+        Sort sort = ordem.equalsIgnoreCase("asc")
+                ? Sort.by("valorGanho").ascending()
+                : Sort.by("valorGanho").descending();
+
+        PageRequest paginacao = PageRequest.of(numeroDaPagina, tamanhoDaPagina, sort);
+        Page<Item> pagina = itemRepository.findAll(paginacao);
+
+        List<Item> items = pagina.getContent();
+
+        List<Item> A = new ArrayList<>();
+        List<Item> B = new ArrayList<>();
+        List<Item> C = new ArrayList<>();
+
+        double porcentagemAcumulada = 0;
+        for (Item item : items) {
+            double porcentagem = item.getValorGanho() / itemRepository.valorTotal() * 100;
+
+            porcentagemAcumulada += porcentagem;
+
+            if (porcentagemAcumulada <= 80.0) {
+                A.add(item);
+            } else if (porcentagemAcumulada <= 95.0) {
+                B.add(item);
+            } else {
+                C.add(item);
+            }
+        }
+
+
+
+        return ResponseSistemaABC.builder()
+                .itemsA(itemMapper.toItemDTOs(A))
+                .itemsB(itemMapper.toItemDTOs(B))
+                .itemsC(itemMapper.toItemDTOs(C))
                 .numeroDaPagina(pagina.getNumber())
                 .tamanhoDaPagina(pagina.getSize())
                 .totalDeElementos(pagina.getTotalElements())

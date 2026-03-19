@@ -12,4 +12,7 @@ public interface ItemRepository extends JpaRepository<Item, Integer> {
 
     @Query("select i from Item i where i.quantidadeEmEstoque < i.quantidadeMinima")
     Page<Item> findItemEmAlerta(Pageable paginacao);
+
+    @Query("select sum(i.valorGanho) from Item i")
+    Double valorTotal();
 }
