@@ -11,6 +11,7 @@ import com.inventario.projeto.payload.Response;
 import com.inventario.projeto.repositories.ItemRepository;
 import com.inventario.projeto.repositories.MovimentacaoRepository;
 import com.inventario.projeto.service.MovimentacaoService;
+import com.inventario.projeto.util.AuthUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -30,6 +31,7 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
     private final ItemRepository itemRepository;
 
     private final MovimentacaoMapper movimentacaoMapper;
+    private final AuthUtil authUtil;
 
     @Override
     public Response<MovimentacaoDTO> todasMovimentacoes(Integer numeroDaPagina, Integer tamanhoDaPagina, String ordenarMovimentacoesPor, String ordem) {
@@ -127,6 +129,7 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
         movimentacao.setItem(itemFromDB);
         movimentacao.setQuantidade(quantidade);
         movimentacao.setTipo(tipo);
+        movimentacao.setReponsavel(authUtil.getUsuarioLogado().getNomeDoUsuario());
 
         movimentacao = movimentacaoRepository.save(movimentacao);
         return movimentacaoMapper.toMovimentacaoDTO(movimentacao);
@@ -180,7 +183,14 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
             itemRepository.save(itemFromMovimentacao);
         }
 
-        if (movimentacaoToBeUpdated.getReponsavel() == null) movimentacaoToBeUpdated.setReponsavel(movimentacaoFromDB.getReponsavel());
+        if (movimentacaoToBeUpdated.getReponsavel() == null) {
+            movimentacaoToBeUpdated.setReponsavel(movimentacaoFromDB.getReponsavel());
+        } else {
+            if (!movimentacaoToBeUpdated.getReponsavel().equals(movimentacaoFromDB.getReponsavel())) {
+                movimentacaoToBeUpdated.setReponsavel(authUtil.getUsuarioLogado().getNomeDoUsuario());
+            }
+        }
+
         movimentacaoToBeUpdated.setDataMovimentacao(LocalDate.now());
         movimentacaoToBeUpdated.setItem(movimentacaoFromDB.getItem());
         movimentacaoToBeUpdated.setId(movimentacaoFromDB.getId());
