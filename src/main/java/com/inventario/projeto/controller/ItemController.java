@@ -10,8 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
@@ -21,6 +19,8 @@ public class ItemController {
 
     @GetMapping("/itens")
     public ResponseEntity<Response<ItemDTO>> getItems(
+            @RequestParam(name = "palavraChave", required = false) String palavraChave,
+            @RequestParam(name = "categoria", required = false) String categoria,
             @RequestParam(name = "numeroDaPagina",
                     defaultValue = ParametrosDeBusca.NUMERO_DA_PAGINA, required = false) Integer numeroDaPagina,
             @RequestParam(name = "tamanhoDaPagina",
@@ -29,7 +29,7 @@ public class ItemController {
                     defaultValue = ParametrosDeBusca.ORDENAR_ITEMS_POR, required = false) String ordenarItemsPor,
             @RequestParam(name = "ordem",
                     defaultValue = ParametrosDeBusca.ORDEM, required = false) String ordem) {
-        Response<ItemDTO> items = itemService.findAll(numeroDaPagina, tamanhoDaPagina, ordenarItemsPor, ordem);
+        Response<ItemDTO> items = itemService.findAll(palavraChave, categoria, numeroDaPagina, tamanhoDaPagina, ordenarItemsPor, ordem);
         return new ResponseEntity<>(items, HttpStatus.OK);
     }
 

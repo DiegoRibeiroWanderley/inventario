@@ -6,7 +6,7 @@ import com.inventario.projeto.payload.ResponseSistemaABC;
 
 public interface ItemService {
 
-    Response<ItemDTO> findAll(Integer numeroDaPagina, Integer tamanhoDaPagina, String ordenarItemsPor, String ordem);
+    Response<ItemDTO> findAll(String palavraChave, String categoria, Integer numeroDaPagina, Integer tamanhoDaPagina, String ordenarItemsPor, String ordem);
 
     Response<ItemDTO> findItemsEmAlerta(Integer numeroDaPagina, Integer tamanhoDaPagina, String ordenarItemsPor, String ordem);
 

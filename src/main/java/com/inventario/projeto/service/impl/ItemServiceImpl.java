@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -29,14 +30,15 @@ public class ItemServiceImpl implements ItemService {
     private final ItemMapper itemMapper;
 
     @Override
-    public Response<ItemDTO> findAll(Integer numeroDaPagina, Integer tamanhoDaPagina, String ordenarItemsPor, String ordem) {
+    public Response<ItemDTO> findAll(String palavraChave, String categoria, Integer numeroDaPagina, Integer tamanhoDaPagina, String ordenarItemsPor, String ordem) {
 
         Sort sort = ordem.equalsIgnoreCase("asc")
                 ? Sort.by(ordenarItemsPor).ascending()
                 : Sort.by(ordenarItemsPor).descending();
 
         PageRequest paginacao = PageRequest.of(numeroDaPagina, tamanhoDaPagina, sort);
-        Page<Item> pagina = itemRepository.findAll(paginacao);
+        Specification<Item> spec = specification(palavraChave, categoria);
+        Page<Item> pagina = itemRepository.findAll(spec, paginacao);
 
         List<Item> items = pagina.getContent();
 
@@ -48,6 +50,25 @@ public class ItemServiceImpl implements ItemService {
                 .totalDePaginas(pagina.getTotalPages())
                 .ultimaPagina(pagina.isLast())
                 .build();
+    }
+
+    private Specification<Item> specification(String palavraChave, String categoria) {
+        Specification<Item> spec = ((root, query, criteriaBuilder) -> criteriaBuilder.conjunction());
+
+        if (palavraChave != null && !palavraChave.isEmpty()) {
+            spec = spec.and(((root, query, criteriaBuilder) ->
+                    criteriaBuilder.or(
+                            criteriaBuilder.like(criteriaBuilder.lower(root.get("nome")), "%" + palavraChave.toLowerCase() + "%"),
+                            criteriaBuilder.like(criteriaBuilder.lower(root.get("marca")), "%" + palavraChave.toLowerCase() + "%")
+                    )));
+        }
+
+        if (categoria != null && !categoria.isEmpty()) {
+            spec = spec.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.like((root.get("categoria").get("nome")), categoria));
+        }
+
+        return spec;
     }
 
     @Override
@@ -101,8 +122,6 @@ public class ItemServiceImpl implements ItemService {
             }
         }
 
-
-
         return ResponseSistemaABC.builder()
                 .itemsA(itemMapper.toItemDTOs(A))
                 .itemsB(itemMapper.toItemDTOs(B))
@@ -133,11 +152,13 @@ public class ItemServiceImpl implements ItemService {
         Item itemToBeUpdated = itemMapper.toItem(itemDTO);
 
         if (itemToBeUpdated.getSKU() == null) itemToBeUpdated.setSKU(itemFromDB.getSKU());
-        if (itemToBeUpdated.getCodigoDeBarras() == null) itemToBeUpdated.setCodigoDeBarras(itemFromDB.getCodigoDeBarras());
+        if (itemToBeUpdated.getCodigoDeBarras() == null)
+            itemToBeUpdated.setCodigoDeBarras(itemFromDB.getCodigoDeBarras());
         if (itemToBeUpdated.getNome() == null) itemToBeUpdated.setNome(itemFromDB.getNome());
         if (itemToBeUpdated.getDescricao() == null) itemToBeUpdated.setDescricao(itemFromDB.getDescricao());
         if (itemToBeUpdated.getMarca() == null) itemToBeUpdated.setMarca(itemFromDB.getMarca());
-        if (itemToBeUpdated.getQuantidadeMinima() == null) itemToBeUpdated.setQuantidadeMinima(itemFromDB.getQuantidadeMinima());
+        if (itemToBeUpdated.getQuantidadeMinima() == null)
+            itemToBeUpdated.setQuantidadeMinima(itemFromDB.getQuantidadeMinima());
         if (itemToBeUpdated.getPeso() == null) itemToBeUpdated.setPeso(itemFromDB.getPeso());
         if (itemToBeUpdated.getPrecoCompra() == null) itemToBeUpdated.setPrecoCompra(itemFromDB.getPrecoCompra());
         if (itemToBeUpdated.getPrecoVenda() == null) itemToBeUpdated.setPrecoVenda(itemFromDB.getPrecoVenda());
