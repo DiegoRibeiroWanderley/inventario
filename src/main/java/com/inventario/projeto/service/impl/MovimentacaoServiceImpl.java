@@ -21,6 +21,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 
 @Service
@@ -76,12 +77,17 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
     }
 
     @Override
-    public Response<MovimentacaoDTO> buscarMovimentacaoPorMesAno(String mes, Integer ano, Integer numeroDaPagina, Integer tamanhoDaPagina, String ordenarMovimentacoesPor, String ordem) {
-        Meses mesEnum = Meses.valueOf(mes.toUpperCase());
-        int mesInt = mesEnum.ordinal() + 1;
+    public Response<MovimentacaoDTO> buscarMovimentacaoPorPeriodo(String mesInicio, String mesFinal, Integer anoInicio, Integer anoFinal, Integer numeroDaPagina, Integer tamanhoDaPagina, String ordenarMovimentacoesPor, String ordem) {
+        Meses mesInicioEnum = Meses.valueOf(mesInicio.toUpperCase());
+        int mesInicioInt = mesInicioEnum.ordinal() + 1;
 
-        LocalDate dataInicio = LocalDate.of(ano, mesInt, 1);
-        LocalDate dataFinal = dataInicio.withDayOfMonth(dataInicio.lengthOfMonth());
+        Meses mesFinalEnum = Meses.valueOf(mesFinal.toUpperCase());
+        int mesFinalInt = mesFinalEnum.ordinal() + 1;
+
+        LocalDate dataInicio = LocalDate.of(anoInicio, mesInicioInt, 1);
+
+        YearMonth diaFinal = YearMonth.of(anoFinal, mesFinalInt);
+        LocalDate dataFinal = LocalDate.of(anoFinal, mesFinalInt, diaFinal.lengthOfMonth());
 
         Sort sort = ordem.equalsIgnoreCase("asc")
                 ? Sort.by(ordenarMovimentacoesPor).ascending()

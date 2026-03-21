@@ -9,7 +9,7 @@ public interface MovimentacaoService {
 
     Response<MovimentacaoDTO> buscarMovimentacoesPorItem(Integer id, Integer numeroDaPagina, Integer tamanhoDaPagina, String ordenarMovimentacoesPor, String ordem);
 
-    Response<MovimentacaoDTO> buscarMovimentacaoPorMesAno(String mes, Integer ano, Integer numeroDaPagina, Integer tamanhoDaPagina, String ordenarMovimentacoesPor, String ordem);
+    Response<MovimentacaoDTO> buscarMovimentacaoPorPeriodo(String mesInicio, String mesFinal, Integer anoInicio, Integer anoFinal, Integer numeroDaPagina, Integer tamanhoDaPagina, String ordenarMovimentacoesPor, String ordem);
 
     MovimentacaoDTO movimentacao(String tipo, Integer itemId, Integer quantidade);
 
