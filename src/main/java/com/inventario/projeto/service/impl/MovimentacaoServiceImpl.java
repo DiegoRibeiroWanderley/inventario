@@ -121,9 +121,8 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
         if (tipo.equalsIgnoreCase("entrada")) itemFromDB.setEntradas(itemFromDB.getEntradas() + quantidade);
 
         double precoVenda = itemFromDB.getPrecoVenda() - itemFromDB.getPrecoCompra();
-        double precoVendaComTaxa = precoVenda + precoVenda * (itemFromDB.getTaxa() / 100);
 
-        itemFromDB.setValorGanho(itemFromDB.getSaidas() * precoVendaComTaxa);
+        itemFromDB.setValorGanho(itemFromDB.getSaidas() * precoVenda);
 
         if (itemFromDB.getQuantidadeEmEstoque() < 0) {
             throw new APIException("Não há estoque sufuciente para essa movimentação");
