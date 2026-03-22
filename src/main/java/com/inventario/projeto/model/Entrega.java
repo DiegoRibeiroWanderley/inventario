@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Data
@@ -20,8 +21,12 @@ public class Entrega {
     private Integer entregaId;
 
     @ManyToOne
-    @JoinColumn(name = "movimentaco_id")
-    private Movimentacao movimentacao;
+    @JoinColumn(name = "pedido_id")
+    private Pedido pedido;
+
+    @ManyToMany
+    @JoinTable(name = "entrega_movimentacao")
+    private List<Movimentacao> movimentacoes;
 
     private LocalDate dataDespacho;
 
