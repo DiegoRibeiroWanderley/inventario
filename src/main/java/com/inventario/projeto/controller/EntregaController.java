@@ -30,36 +30,6 @@ public class EntregaController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/entregas/movimentacao/{movimentacaoId}")
-    public ResponseEntity<Response<EntregaDTO>> findByMovimentacao(
-            @PathVariable Integer movimentacaoId,
-            @RequestParam(name = "numeroDaPagina",
-                    defaultValue = ParametrosDeBusca.NUMERO_DA_PAGINA, required = false) Integer numeroDaPagina,
-            @RequestParam(name = "tamanhoDaPagina",
-                    defaultValue = ParametrosDeBusca.TAMANHO_DA_PAGINA, required = false) Integer tamanhoDaPagina,
-            @RequestParam(name = "ordenarItemsPor",
-                    defaultValue = ParametrosDeBusca.ORDENAR_ENTREGAS_POR, required = false) String ordenarEntregasPor,
-            @RequestParam(name = "ordem",
-                    defaultValue = ParametrosDeBusca.ORDEM, required = false) String ordem) {
-        Response<EntregaDTO> response = entregaService.findByMovimentacao(numeroDaPagina, tamanhoDaPagina, ordenarEntregasPor, ordem, movimentacaoId);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @GetMapping("/entregas/item/{itemId}")
-    public ResponseEntity<Response<EntregaDTO>> findByItem(
-            @PathVariable Integer itemId,
-            @RequestParam(name = "numeroDaPagina",
-                    defaultValue = ParametrosDeBusca.NUMERO_DA_PAGINA, required = false) Integer numeroDaPagina,
-            @RequestParam(name = "tamanhoDaPagina",
-                    defaultValue = ParametrosDeBusca.TAMANHO_DA_PAGINA, required = false) Integer tamanhoDaPagina,
-            @RequestParam(name = "ordenarItemsPor",
-                    defaultValue = ParametrosDeBusca.ORDENAR_ENTREGAS_POR, required = false) String ordenarEntregasPor,
-            @RequestParam(name = "ordem",
-                    defaultValue = ParametrosDeBusca.ORDEM, required = false) String ordem) {
-        Response<EntregaDTO> response = entregaService.findByItem(numeroDaPagina, tamanhoDaPagina, ordenarEntregasPor, ordem, itemId);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
     @GetMapping("/entregas/{mesInicio}/{anoInicio}/{mesFinal}/{anoFinal}")
     public ResponseEntity<Response<EntregaDTO>> findByItem(
             @PathVariable String mesInicio, @PathVariable Integer anoInicio, @PathVariable String mesFinal, @PathVariable Integer anoFinal,
@@ -75,9 +45,9 @@ public class EntregaController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping("/entrega/add/item/{itemId}/quantidade/{quantidade}")
-    public ResponseEntity<EntregaDTO> createEntrega(@RequestBody EntregaDTO entregaDTO, @PathVariable Integer itemId, @PathVariable Integer quantidade) {
-        EntregaDTO entrega = entregaService.createEntrega(entregaDTO, itemId, quantidade);
+    @PostMapping("/entrega/add/pedido/{pedidoId}")
+    public ResponseEntity<EntregaDTO> createEntrega(@RequestBody EntregaDTO entregaDTO, @PathVariable Integer pedidoId) {
+        EntregaDTO entrega = entregaService.createEntrega(entregaDTO, pedidoId);
         return new ResponseEntity<>(entrega, HttpStatus.CREATED);
     }
 

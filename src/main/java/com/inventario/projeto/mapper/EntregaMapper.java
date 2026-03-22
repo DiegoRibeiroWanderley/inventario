@@ -10,10 +10,12 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface EntregaMapper {
 
-    @Mapping(target = "movimentacaoId", ignore = true)
+    @Mapping(target = "pedidoId", ignore = true)
+    @Mapping(target = "movimentacoesId", ignore = true)
     EntregaDTO toEntregaDTO(Entrega entrega);
 
-    @Mapping(target = "movimentacao", ignore = true)
+    @Mapping(target = "pedido", ignore = true)
+    @Mapping(target = "movimentacoes", ignore = true)
     Entrega toEntrega(EntregaDTO entregaDTO);
 
     List<EntregaDTO> toEntregaDTOs(List<Entrega> entregas);

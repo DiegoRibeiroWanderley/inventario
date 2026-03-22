@@ -1,19 +1,22 @@
 package com.inventario.projeto.service.impl;
 
+import com.inventario.projeto.exception.APIException;
 import com.inventario.projeto.exception.NotFoundException;
 import com.inventario.projeto.mapper.EntregaMapper;
 import com.inventario.projeto.mapper.MovimentacaoMapper;
 import com.inventario.projeto.model.Entrega;
 import com.inventario.projeto.model.Movimentacao;
+import com.inventario.projeto.model.Pedido;
 import com.inventario.projeto.model.enums.Meses;
 import com.inventario.projeto.model.enums.Status;
 import com.inventario.projeto.payload.DTO.EntregaDTO;
 import com.inventario.projeto.payload.DTO.MovimentacaoDTO;
 import com.inventario.projeto.payload.Response;
 import com.inventario.projeto.repositories.EntregaRepository;
-import com.inventario.projeto.repositories.MovimentacaoRepository;
+import com.inventario.projeto.repositories.PedidoRepository;
 import com.inventario.projeto.service.EntregaService;
 import com.inventario.projeto.service.MovimentacaoService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -30,10 +34,10 @@ import java.util.List;
 public class EntregaServiceImpl implements EntregaService {
 
     private final EntregaRepository entregaRepository;
-    private final MovimentacaoRepository movimentacaoRepository;
 
     private final EntregaMapper entregaMapper;
     private final MovimentacaoService movimentacaoService;
+    private final PedidoRepository pedidoRepository;
     private final MovimentacaoMapper movimentacaoMapper;
 
 
@@ -45,44 +49,6 @@ public class EntregaServiceImpl implements EntregaService {
 
         Pageable paginacao = PageRequest.of(numeroDaPagina, tamanhoDaPagina, sort);
         Page<Entrega> pagina = entregaRepository.findAll(paginacao);
-
-        return Response.<EntregaDTO>builder()
-                .content(toEntregaDTOs(pagina))
-                .numeroDaPagina(pagina.getNumber())
-                .tamanhoDaPagina(pagina.getSize())
-                .totalDeElementos(pagina.getTotalElements())
-                .totalDePaginas(pagina.getTotalPages())
-                .ultimaPagina(pagina.isLast())
-                .build();
-    }
-
-    @Override
-    public Response<EntregaDTO> findByMovimentacao(Integer numeroDaPagina, Integer tamanhoDaPagina, String ordenarEntradasPor, String ordem, Integer movimentacaoId) {
-        Sort sort = ordem.equalsIgnoreCase("asc")
-                ? Sort.by(ordenarEntradasPor).ascending()
-                : Sort.by(ordenarEntradasPor).descending();
-
-        Pageable paginacao = PageRequest.of(numeroDaPagina, tamanhoDaPagina, sort);
-        Page<Entrega> pagina = entregaRepository.findEntregaByMovimentacao_Id(movimentacaoId ,paginacao);
-
-        return Response.<EntregaDTO>builder()
-                .content(toEntregaDTOs(pagina))
-                .numeroDaPagina(pagina.getNumber())
-                .tamanhoDaPagina(pagina.getSize())
-                .totalDeElementos(pagina.getTotalElements())
-                .totalDePaginas(pagina.getTotalPages())
-                .ultimaPagina(pagina.isLast())
-                .build();
-    }
-
-    @Override
-    public Response<EntregaDTO> findByItem(Integer numeroDaPagina, Integer tamanhoDaPagina, String ordenarEntradasPor, String ordem, Integer itemId) {
-        Sort sort = ordem.equalsIgnoreCase("asc")
-                ? Sort.by(ordenarEntradasPor).ascending()
-                : Sort.by(ordenarEntradasPor).descending();
-
-        Pageable paginacao = PageRequest.of(numeroDaPagina, tamanhoDaPagina, sort);
-        Page<Entrega> pagina = entregaRepository.findEntregaByMovimentacao_Item_Id(itemId ,paginacao);
 
         return Response.<EntregaDTO>builder()
                 .content(toEntregaDTOs(pagina))
@@ -122,21 +88,32 @@ public class EntregaServiceImpl implements EntregaService {
                 .build();
     }
 
+    @Transactional
     @Override
-    public EntregaDTO createEntrega(EntregaDTO entregaDTO, Integer itemId, Integer quantidade) {
+    public EntregaDTO createEntrega(EntregaDTO entregaDTO, Integer pedidoId) {
         Entrega entrega = new Entrega();
 
-        MovimentacaoDTO movimentacaoDTO = movimentacaoService.movimentacao("saida", itemId, quantidade);
-        Movimentacao movimentacao = movimentacaoMapper.toMovimentacao(movimentacaoDTO);
+        Pedido pedido = pedidoRepository.findById(pedidoId)
+                .orElseThrow(() -> new NotFoundException("Pedido", pedidoId));
 
-        entrega.setMovimentacao(movimentacao);
+        List<Movimentacao> movimentacoes = new ArrayList<>();
+        pedido.getItens().forEach(item -> {
+            MovimentacaoDTO novaMovimentacao = movimentacaoService.movimentacao("saida", item.getItem().getId(), item.getQuantidade());
+            movimentacoes.add(movimentacaoMapper.toMovimentacao(novaMovimentacao));
+        });
+
+        entrega.setMovimentacoes(movimentacoes);
+        entrega.setPedido(pedido);
         entrega.setStatus(Status.PEDIDO_RECEBIDO);
         entrega.setTransportadora(entregaDTO.getTransportadora());
         entrega.setValorFrete(entregaDTO.getValorFrete());
 
+        pedido.setStatus(Status.LANCADO);
+
         Entrega savedEntrega = entregaRepository.save(entrega);
         EntregaDTO savedEntregaDTO = entregaMapper.toEntregaDTO(savedEntrega);
-        savedEntregaDTO.setMovimentacaoId(movimentacao.getId());
+        savedEntregaDTO.setPedidoId(pedido.getId());
+        savedEntregaDTO.setMovimentacoesId(movimentacoes.stream().map(m -> m.getId()).toList());
 
         return savedEntregaDTO;
     }
@@ -148,7 +125,8 @@ public class EntregaServiceImpl implements EntregaService {
 
         Entrega entregaToBeUpdated = entregaMapper.toEntrega(entregaDTO);
 
-        if (entregaToBeUpdated.getMovimentacao() == null) entregaToBeUpdated.setMovimentacao(entregaFromDB.getMovimentacao());
+        if (entregaToBeUpdated.getPedido() == null) entregaToBeUpdated.setPedido(entregaFromDB.getPedido());
+        if (entregaToBeUpdated.getMovimentacoes() ==  null) entregaToBeUpdated.setMovimentacoes(entregaFromDB.getMovimentacoes());
         if (entregaToBeUpdated.getDataDespacho() == null) entregaToBeUpdated.setDataDespacho(entregaFromDB.getDataDespacho());
         if (entregaToBeUpdated.getValorFrete() == null) entregaToBeUpdated.setValorFrete(entregaFromDB.getValorFrete());
         if (entregaToBeUpdated.getStatus() == null) entregaToBeUpdated.setStatus(entregaFromDB.getStatus());
@@ -157,23 +135,22 @@ public class EntregaServiceImpl implements EntregaService {
 
         Entrega updatedEntrega = entregaRepository.save(entregaToBeUpdated);
         EntregaDTO updatedEntregaDTO = entregaMapper.toEntregaDTO(updatedEntrega);
-        updatedEntregaDTO.setMovimentacaoId(entregaFromDB.getMovimentacao().getId());
+        updatedEntregaDTO.setPedidoId(entregaFromDB.getPedido().getId());
 
         return updatedEntregaDTO;
     }
 
+    @Transactional
     @Override
     public EntregaDTO deleteEntrega(Integer id) {
         Entrega entregaFromDB = entregaRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Entrega", id));
-        Movimentacao movimentacao = movimentacaoRepository.findById(entregaFromDB.getMovimentacao().getId())
-                .orElseThrow(() -> new NotFoundException("Movimentacao", id));
 
+        entregaFromDB.getMovimentacoes().forEach(m -> movimentacaoService.deletarMovimentacao(m.getId()));
         entregaRepository.deleteById(id);
-        movimentacaoService.deletarMovimentacao(movimentacao.getId());
 
         EntregaDTO entregaDTO = entregaMapper.toEntregaDTO(entregaFromDB);
-        entregaDTO.setMovimentacaoId(movimentacao.getId());
+        entregaDTO.setPedidoId(entregaFromDB.getPedido().getId());
 
         return entregaDTO;
     }
@@ -182,7 +159,7 @@ public class EntregaServiceImpl implements EntregaService {
         List<Entrega> entregas = pagina.getContent();
         return entregas.stream().map(entrega -> {
             EntregaDTO entregaDTO = entregaMapper.toEntregaDTO(entrega);
-            entregaDTO.setMovimentacaoId(entrega.getMovimentacao().getId());
+            entregaDTO.setPedidoId(entrega.getPedido().getId());
             return entregaDTO;
         }).toList();
     }
