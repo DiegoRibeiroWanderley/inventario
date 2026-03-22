@@ -7,7 +7,6 @@ import com.inventario.projeto.model.ItemPedido;
 import com.inventario.projeto.model.Pedido;
 import com.inventario.projeto.model.enums.Status;
 import com.inventario.projeto.payload.DTO.PedidoDTO;
-import com.inventario.projeto.repositories.ItemPedidoRepository;
 import com.inventario.projeto.repositories.ItemRepository;
 import com.inventario.projeto.repositories.PedidoRepository;
 import com.inventario.projeto.service.PedidoService;
@@ -24,7 +23,6 @@ public class PedidoServiceImpl implements PedidoService {
 
     private final PedidoRepository pedidoRepository;
     private final ItemRepository itemRepository;
-    private final ItemPedidoRepository itemPedidoRepository;
     private final PedidoMapper pedidoMapper;
 
     @Transactional
