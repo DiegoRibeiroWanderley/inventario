@@ -6,5 +6,8 @@ public enum Status {
     SEPARANDO_PRODUTOS,
     DESPACHADO,
     EM_ROTA,
-    ENTREGUE
+    ENTREGUE,
+
+    EM_CRIACAO,
+    LANCADO
 }
