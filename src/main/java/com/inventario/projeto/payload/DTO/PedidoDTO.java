@@ -1,6 +1,5 @@
 package com.inventario.projeto.payload.DTO;
 
-import com.inventario.projeto.model.ItemPedido;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,7 +13,7 @@ import java.util.List;
 public class PedidoDTO {
 
     private Long id;
-    List<ItemPedido> itens;
+    List<ItemPedidoDTO> itens;
     private Double precoItems;
     private Double precoTaxas;
     private Double precoTotal;
