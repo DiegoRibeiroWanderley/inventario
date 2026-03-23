@@ -4,7 +4,7 @@ import com.inventario.projeto.model.Pedido;
 import com.inventario.projeto.payload.DTO.PedidoDTO;
 import org.mapstruct.Mapper;
 
-@Mapper(componentModel = "spring", uses = ItemMapper.class)
+@Mapper(componentModel = "spring", uses = ItemPedidoMapper.class)
 public interface PedidoMapper {
 
     PedidoDTO toPedidoDTO(Pedido pedido);
