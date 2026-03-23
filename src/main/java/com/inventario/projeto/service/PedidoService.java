@@ -7,4 +7,6 @@ public interface PedidoService {
     PedidoDTO adicionarItemAoPedido(Integer itemId, Integer quantidade);
 
     PedidoDTO lancarPedido();
+
+    PedidoDTO deletarPedido(Integer pedidoId);
 }

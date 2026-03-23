@@ -63,6 +63,16 @@ public class PedidoServiceImpl implements PedidoService {
         return pedidoMapper.toPedidoDTO(pedidoLancado);
     }
 
+    @Transactional
+    @Override
+    public PedidoDTO deletarPedido(Integer pedidoId) {
+        Pedido pedido = pedidoRepository.findById(pedidoId)
+                .orElseThrow(() -> new NotFoundException("Pedido", pedidoId));
+
+        pedidoRepository.delete(pedido);
+        return pedidoMapper.toPedidoDTO(pedido);
+    }
+
     private Pedido criarPedido() {
         if (pedidoRepository.findPedidoByStatus(Status.EM_CRIACAO) == null) {
             Pedido pedido = new Pedido();

@@ -5,10 +5,7 @@ import com.inventario.projeto.service.PedidoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
@@ -26,6 +23,12 @@ public class PedidoController {
     @PostMapping("/pedido/lancar")
     public ResponseEntity<PedidoDTO> lancarPedido() {
         PedidoDTO pedido = pedidoService.lancarPedido();
+        return new ResponseEntity<>(pedido, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/pedido/deletar/{pedidoId}")
+    public ResponseEntity<PedidoDTO> deletarPedido(@PathVariable Integer pedidoId) {
+        PedidoDTO pedido = pedidoService.deletarPedido(pedidoId);
         return new ResponseEntity<>(pedido, HttpStatus.OK);
     }
 }
