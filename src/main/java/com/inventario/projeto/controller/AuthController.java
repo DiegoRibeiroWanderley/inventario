@@ -43,7 +43,7 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@RequestBody @Valid SignupRequest signupRequest) {
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signupRequest) {
         if (userRepository.existsByNomeDoUsuario(signupRequest.getNomeDoUsuario())) {
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken."));
         }
@@ -84,7 +84,7 @@ public class AuthController {
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<?> authentication(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> authentication(@Valid @RequestBody LoginRequest loginRequest) {
         Authentication authentication;
 
         try {
