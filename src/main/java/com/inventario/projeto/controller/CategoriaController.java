@@ -2,6 +2,7 @@ package com.inventario.projeto.controller;
 
 import com.inventario.projeto.payload.DTO.CategoriaDTO;
 import com.inventario.projeto.service.CategoriaService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,13 +24,13 @@ public class CategoriaController {
     }
 
     @PostMapping("/categorias/add")
-    public ResponseEntity<CategoriaDTO> addCategoria(@RequestBody CategoriaDTO categoriaDTO) {
+    public ResponseEntity<CategoriaDTO> addCategoria(@Valid @RequestBody CategoriaDTO categoriaDTO) {
         CategoriaDTO addedCategoria = categoriaService.addCategoria(categoriaDTO);
         return new ResponseEntity<>(addedCategoria, HttpStatus.CREATED);
     }
 
     @PutMapping("/categoria/{id}/update")
-    public ResponseEntity<CategoriaDTO> updateCategoria(@PathVariable Integer id, @RequestBody CategoriaDTO categoriaDTO) {
+    public ResponseEntity<CategoriaDTO> updateCategoria(@PathVariable Integer id, @Valid @RequestBody CategoriaDTO categoriaDTO) {
         CategoriaDTO updatedCategoria = categoriaService.updateCategoria(id, categoriaDTO);
         return new ResponseEntity<>(updatedCategoria, HttpStatus.OK);
     }
