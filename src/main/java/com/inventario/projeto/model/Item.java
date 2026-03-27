@@ -1,7 +1,6 @@
 package com.inventario.projeto.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,15 +18,9 @@ public class Item {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @NotEmpty(message = "O item deve conter um SKU")
     private String SKU;
-
-    @NotEmpty(message = "O item deve conter um código de barras")
     private String codigoDeBarras;
-
-    @NotEmpty(message = "O item deve conter um nome")
     private String nome;
-
     private String descricao;
 
     @ManyToOne

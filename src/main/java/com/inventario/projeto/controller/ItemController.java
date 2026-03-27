@@ -5,6 +5,7 @@ import com.inventario.projeto.payload.DTO.ItemDTO;
 import com.inventario.projeto.payload.Response;
 import com.inventario.projeto.payload.ResponseSistemaABC;
 import com.inventario.projeto.service.ItemService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -62,13 +63,13 @@ public class ItemController {
     }
 
     @PostMapping("/itens/add/categoria/{categoriaId}")
-    public ResponseEntity<ItemDTO> addItem(@RequestBody ItemDTO itemDTO, @PathVariable Integer categoriaId) {
+    public ResponseEntity<ItemDTO> addItem(@Valid @RequestBody ItemDTO itemDTO, @PathVariable Integer categoriaId) {
         ItemDTO addedItem = itemService.addItem(itemDTO, categoriaId);
         return new ResponseEntity<>(addedItem, HttpStatus.CREATED);
     }
 
     @PutMapping("/item/{id}/update")
-    public ResponseEntity<ItemDTO> updateItem(@PathVariable Integer id, @RequestBody ItemDTO itemDTO) {
+    public ResponseEntity<ItemDTO> updateItem(@PathVariable Integer id, @Valid @RequestBody ItemDTO itemDTO) {
         ItemDTO updatedItem = itemService.updateItem(id, itemDTO);
         return new ResponseEntity<>(updatedItem, HttpStatus.OK);
     }
