@@ -58,5 +58,10 @@ public class Item {
         if (ativo == null) ativo = true;
         if (saidas == null) saidas = 0;
         if (entradas == null) entradas = 0;
+        if (quantidadeEmEstoque == null) quantidadeEmEstoque = 0;
+        if (quantidadeMinima == null) quantidadeMinima = 0;
+        if (precoCompra == null) precoCompra = 0.0;
+        if (precoVenda == null) precoVenda = 0.0;
+        if (taxa == null) taxa = 0.0;
     }
 }
