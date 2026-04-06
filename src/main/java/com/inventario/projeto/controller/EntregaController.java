@@ -31,8 +31,11 @@ public class EntregaController {
     }
 
     @GetMapping("/entregas/{mesInicio}/{anoInicio}/{mesFinal}/{anoFinal}")
-    public ResponseEntity<Response<EntregaDTO>> findByItem(
-            @PathVariable String mesInicio, @PathVariable Integer anoInicio, @PathVariable String mesFinal, @PathVariable Integer anoFinal,
+    public ResponseEntity<Response<EntregaDTO>> findByPeriodo(
+            @PathVariable String mesInicio,
+            @PathVariable Integer anoInicio,
+            @PathVariable String mesFinal,
+            @PathVariable Integer anoFinal,
             @RequestParam(name = "numeroDaPagina",
                     defaultValue = ParametrosDeBusca.NUMERO_DA_PAGINA, required = false) Integer numeroDaPagina,
             @RequestParam(name = "tamanhoDaPagina",
