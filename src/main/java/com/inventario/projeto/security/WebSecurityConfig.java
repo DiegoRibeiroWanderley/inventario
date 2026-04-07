@@ -63,6 +63,7 @@ public class WebSecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers("/api/auth/signin").permitAll()
+                                .requestMatchers("/api/auth/user").permitAll()
                                 .anyRequest()
                                 .authenticated());
 
@@ -88,17 +89,7 @@ public class WebSecurityConfig {
                         return roleRepository.save(newAdminRole);
                     });
 
-            Set<Funcao> userRoles = Set.of(userRole);
-            Set<Funcao> adminRoles = Set.of(userRole, adminRole);
-
-            if (!userRepository.existsByNomeDoUsuario("user1")) {
-                Usuario user1 = Usuario.builder()
-                        .nomeDoUsuario("user1")
-                        .email("user1@example.com")
-                        .senha(passwordEncoder.encode("password1"))
-                        .build();
-                userRepository.save(user1);
-            }
+            Set<Funcao> adminRoles = Set.of(adminRole);
 
             if (!userRepository.existsByNomeDoUsuario("admin")) {
                 Usuario admin = Usuario.builder()
@@ -108,11 +99,6 @@ public class WebSecurityConfig {
                         .build();
                 userRepository.save(admin);
             }
-
-            userRepository.findByNomeDoUsuario("user1").ifPresent(user -> {
-                user.setFuncoes(userRoles);
-                userRepository.save(user);
-            });
 
             userRepository.findByNomeDoUsuario("admin").ifPresent(admin -> {
                 admin.setFuncoes(adminRoles);
